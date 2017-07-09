@@ -2,6 +2,7 @@
 
 namespace Illuminate\Tests\View\Mix;
 
+use Mockery;
 use PHPUnit\Framework\TestCase;
 use Illuminate\Support\HtmlString;
 
@@ -19,8 +20,20 @@ class MixTest extends TestCase
         app()->singleton('path.public', function () {
             return __DIR__;
         });
+        app()->instance(
+            'url',
+            Mockery::mock(\Illuminate\Contracts\Routing\UrlGenerator::class)->shouldReceive('asset')
+            ->andReturnUsing(function ($path) {
+                return 'assets' . $path;
+            })->getMock()
+        );
 
         $this->mix = new Mix;
+    }
+
+    public function tearDown()
+    {
+        Mockery::close();
     }
 
     /**
@@ -66,7 +79,7 @@ class MixTest extends TestCase
 
     public function testMixMethodWhenCompiled()
     {
-        $this->assertEquals(new HtmlString('/fixtures/bar.css'), $this->mix->resolve('foo.css', 'fixtures'));
+        $this->assertEquals(new HtmlString('assets/fixtures/bar.css'), $this->mix->resolve('foo.css', 'fixtures'));
     }
 
     public function testMixMethodWhenHMR()

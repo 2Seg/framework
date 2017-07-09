@@ -95,7 +95,7 @@ class Mix
      */
     protected function sanitize($path)
     {
-        if (! Str::startsWith($path, '/')) {
+        if ($path && ! Str::startsWith($path, '/')) {
             $path = "/{$path}";
         }
 
@@ -136,7 +136,7 @@ class Mix
      */
     protected function getCompiledPath($manifestDirectory, $path)
     {
-        return new HtmlString($manifestDirectory.$this->getPathFromManifest($manifestDirectory, $path));
+        return new HtmlString(asset($manifestDirectory.$this->getPathFromManifest($manifestDirectory, $path)));
     }
 
     /**
@@ -152,7 +152,7 @@ class Mix
     {
         $manifest = $this->getManifest($manifestDirectory);
 
-        if (array_key_exists($path, $manifest)) {
+        if (isset($manifest[$path])) {
             return $manifest[$path];
         }
 
@@ -173,7 +173,7 @@ class Mix
     {
         $manifestPath = public_path($manifestDirectory.$this->manifestFilename);
 
-        if (! array_key_exists($manifestPath, $this->cachedManifests)) {
+        if (! isset($this->cachedManifests[$manifestPath])) {
             $this->cacheNewManifest($manifestPath);
         }
 
