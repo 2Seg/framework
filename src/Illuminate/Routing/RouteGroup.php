@@ -87,7 +87,7 @@ class RouteGroup
     protected static function formatAs($new, $old)
     {
         if (isset($old['as'])) {
-            $new['as'] = $old['as'].($new['as'] ?? '');
+            $new['as'] = $old['as'].($new['as'] ?? $new['name'] ?? '');
         }
 
         return $new;
